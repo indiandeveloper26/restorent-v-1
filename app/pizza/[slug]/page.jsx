@@ -146,7 +146,7 @@ export default function ProductDetailPage() {
 
                                 }`}
                         >
-                            {adding ? "Adding..." : "Add to Cart"}
+                            {adding ? "Adding...." : "Add to Cart"}
                         </button>
 
 

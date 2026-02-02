@@ -47,7 +47,7 @@ const RestaurantSchema = new mongoose.Schema(
             {
                 product: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: "Product",
+                    ref: "MenuItem",
                     required: true,
                 },
                 quantity: {

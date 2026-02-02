@@ -36,6 +36,7 @@ const MenuItemSchema = new mongoose.Schema(
             type: Boolean,
             default: true,
         },
+        isActive: { type: Boolean, default: true },
 
         images: [
             {

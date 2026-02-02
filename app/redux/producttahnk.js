@@ -1,16 +1,25 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Fetch products by restaurant ID
+// 🔥 Fetch products by restaurant ID
 export const fetchProducts = createAsyncThunk(
     "products/fetchProducts",
     async (restaurantId, thunkAPI) => {
         try {
-            const res = (await axios.get('/backend/menu/menudata')).data
-            console.log('apicalling now...')
-            return res.data; // assume backend returns array of products
+            console.log("API calling... restaurantId:", restaurantId);
+
+            const res = await axios.get(
+                '/backend/menu/menudata'
+            );
+
+            console.log("API response:", res.data);
+
+            // 👇 only return product array
+            return Array.isArray(res.data.data) ? res.data.data : [];
         } catch (err) {
-            return thunkAPI.rejectWithValue(err.response?.data || err.message);
+            return thunkAPI.rejectWithValue(
+                err.response?.data || err.message
+            );
         }
     }
 );

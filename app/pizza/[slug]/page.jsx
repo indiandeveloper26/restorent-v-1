@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { fetchProducts } from "../../redux/producttahnk";
 import Image from "next/image";
+import { useTheme } from "../../context/contextthem";
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -18,6 +19,14 @@ export default function ProductDetailPage() {
     const [product, setProduct] = useState(null);
     const [adding, setAdding] = useState(false);
     const [id, setId] = useState("");
+
+
+
+
+
+    let { userdataaa } = useTheme()
+
+    console.log('pizzapage', userdataaa._id)
 
     // Get userId from localStorage
     useEffect(() => {
@@ -40,16 +49,17 @@ export default function ProductDetailPage() {
 
     // Add to Cart
     const handleAddToCart = async () => {
-        if (!user) {
+        if (!userdataaa) {
             toast.error("Please login first");
             return;
         }
+        toast.success("Add to cart")
         setAdding(true);
         try {
-            const res = await fetch("/api/cart/add", {
+            const res = await fetch("/backend/api/cart/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: id, productId: product._id }),
+                body: JSON.stringify({ userId: userdataaa._id, productId: product._id }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Failed to add to cart");
@@ -63,7 +73,7 @@ export default function ProductDetailPage() {
 
     // Order Now / Direct Checkout
     const handleOrderNow = () => {
-        if (!user) {
+        if (!userdataaa) {
             toast.error("Please login first");
             return;
         }

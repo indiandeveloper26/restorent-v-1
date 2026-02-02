@@ -1,37 +1,72 @@
-"use client"; // MUST for context
+"use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
+const ThemeContext = createContext();
 
-// 1️⃣ create context
-const ThemeContext = createContext(null);
-
-// 2️⃣ provider
 export function ThemeProvider({ children }) {
     const [theme, setTheme] = useState("light");
-    const [user, setuser] = useState('fasfasd')
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [userdataaa, setuserdata] = useState('fasdfsadf')
+
+
 
     useEffect(() => {
 
-        let dat = async () => {
-            let data = localStorage.getItem("user")
-            console.log('userdta', data)
-            setuser(data)
-        }
-        dat()
+        const fetchProducts = async (restaurantId) => {
+            try {
+                let user = localStorage.getItem('user')
+
+                const json = JSON.parse(user)
+                setuserdata(json?.userdata)
+                console.log('usersdta', json.userdata)
+            } catch (err) {
+                console.log('error')
+            } finally {
+                console.log('find')
+            }
+        };
+        fetchProducts()
+
     }, [])
 
 
+    // 🔥 API CALL YAHAN HOGA
+    const fetchProducts = async (restaurantId) => {
+        try {
+            setLoading(true);
+            setError(null);
 
-    const toggleTheme = () =>
-        setTheme((prev) => (prev === "light" ? "dark" : "light"));
+            const res = await axios.get(
+                '/backend/menu/menudata'
+            );
+            console.log('data', res)
+            setProducts(res.data?.data || []);
+        } catch (err) {
+            setError("Failed to load products");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <ThemeContext.Provider value={{ theme, user, toggleTheme }}>
+        <ThemeContext.Provider
+            value={{
+                theme,
+                setTheme,
+                products,
+                fetchProducts,
+                loading,
+                userdataaa,
+                error,
+            }}
+        >
             {children}
         </ThemeContext.Provider>
     );
 }
 
-// 3️⃣ hook to use context
 export const useTheme = () => useContext(ThemeContext);

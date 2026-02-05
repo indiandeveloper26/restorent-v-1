@@ -20,6 +20,8 @@ export function ThemeProvider({ children }) {
             try {
                 let user = localStorage.getItem('user')
 
+                console.log('userdata', user)
+
                 const json = JSON.parse(user)
                 setuserdata(json?.userdata)
                 console.log('usersdta', json.userdata)

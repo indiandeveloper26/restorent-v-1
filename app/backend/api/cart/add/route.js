@@ -12,7 +12,7 @@ export async function POST(req) {
         const { userId, productId } = await req.json();
 
 
-        console.log('userud', userId, 'prodcutid', productId)
+        console.log('userid', userId, 'prodcutid', productId)
 
         if (!userId || !productId) {
             return NextResponse.json(

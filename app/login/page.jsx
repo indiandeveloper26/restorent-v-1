@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { login } from "../Redux/authslice";
 import { toast } from "react-toastify";
-
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, Lock, Loader2, ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -16,7 +17,6 @@ export default function LoginPage() {
 
     const dispatch = useDispatch();
     const router = useRouter();
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,13 +32,10 @@ export default function LoginPage() {
 
             const data = await res.json();
 
-            console.log('data', data)
-
             if (data.login === "true") {
                 localStorage.setItem("id", data.user._id);
                 dispatch(login({ userdata: data.user }));
                 toast.success("Login successful!");
-                // router.push("/products");
             } else {
                 setMessage("Invalid credentials");
             }
@@ -50,84 +47,121 @@ export default function LoginPage() {
     };
 
     return (
-        <div
-            className={`min-h-screen flex items-center justify-center px-4  "bg-yellow-400" : "bg-white"
-                }`}
-        >
-            <div
-                className={`w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-xl overflow-hidden  "bg-white"  "bg-yellow-400"
-                    }`}
+        <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] px-4">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)] overflow-hidden"
             >
-                {/* LEFT */}
-                <div className="hidden md:flex items-center justify-center bg-yellow-300 p-6">
-                    <Image
-                        src="/img/login.jpg"
-                        alt="login"
-                        width={350}
-                        height={350}
-                        className="rounded-lg shadow-md"
-                    />
+
+                {/* LEFT BRAND */}
+                <div className="hidden md:flex flex-col justify-between p-12 bg-gradient-to-br from-yellow-400 to-yellow-500 relative">
+                    <h2 className="text-white text-3xl font-black tracking-tight">
+                        Your<span className="opacity-70">Shop</span>
+                    </h2>
+
+                    <div>
+                        <Image
+                            src="/img/login.jpg"
+                            alt="Login"
+                            width={420}
+                            height={420}
+                            className="rounded-3xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500"
+                        />
+                        <h3 className="mt-8 text-white text-2xl font-bold">
+                            Secure & Fast Login
+                        </h3>
+                        <p className="text-white/80 text-sm mt-2">
+                            Access your account with confidence.
+                        </p>
+                    </div>
+
+                    <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-white/20 rounded-full blur-3xl" />
                 </div>
 
-                {/* RIGHT */}
-                <div className="p-8 sm:p-10 bg-white">
-                    <h1 className="text-3xl font-bold text-center text-yellow-500 mb-6">
+                {/* RIGHT FORM */}
+                <div className="p-8 md:p-16 flex flex-col justify-center">
+                    <h1 className="text-4xl font-black mb-2 text-gray-900">
                         Welcome Back
                     </h1>
+                    <p className="text-sm text-gray-400 mb-8">
+                        Login to continue
+                    </p>
 
-                    {message && (
-                        <p className="text-center text-red-500 mb-4 text-sm">
-                            {message}
-                        </p>
-                    )}
+                    <AnimatePresence>
+                        {message && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="mb-6 p-4 rounded-xl bg-red-100 text-red-600 text-sm font-semibold"
+                            >
+                                {message}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            required
-                            value={form.email}
-                            onChange={(e) =>
-                                setForm({ ...form, email: e.target.value })
-                            }
-                            className="w-full px-4 py-3 rounded-lg border border-yellow-400 focus:ring-2 focus:ring-yellow-400 outline-none"
-                        />
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div className="relative">
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="email"
+                                placeholder="Email address"
+                                required
+                                value={form.email}
+                                onChange={(e) =>
+                                    setForm({ ...form, email: e.target.value })
+                                }
+                                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-yellow-400 outline-none font-semibold"
+                            />
+                        </div>
 
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            required
-                            value={form.password}
-                            onChange={(e) =>
-                                setForm({ ...form, password: e.target.value })
-                            }
-                            className="w-full px-4 py-3 rounded-lg border border-yellow-400 focus:ring-2 focus:ring-yellow-400 outline-none"
-                        />
+                        <div className="relative">
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="password"
+                                placeholder="Password"
+                                required
+                                value={form.password}
+                                onChange={(e) =>
+                                    setForm({ ...form, password: e.target.value })
+                                }
+                                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-yellow-400 outline-none font-semibold"
+                            />
+                        </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full py-3 rounded-lg font-semibold transition ${loading
+                            className={`w-full py-5 rounded-2xl font-black text-white tracking-widest flex items-center justify-center gap-2 transition ${loading
                                 ? "bg-yellow-300"
-                                : "bg-yellow-400 hover:bg-yellow-500"
+                                : "bg-yellow-400 hover:bg-yellow-500 shadow-xl shadow-yellow-400/30"
                                 }`}
                         >
-                            {loading ? "Logging in..." : "Login"}
+                            {loading ? (
+                                <Loader2 className="animate-spin" />
+                            ) : (
+                                <>
+                                    LOGIN
+                                    <ArrowRight />
+                                </>
+                            )}
                         </button>
                     </form>
 
-                    <p className="text-center text-sm mt-4">
+                    <p className="text-center text-sm mt-6 text-gray-500">
                         Don&apos;t have an account?{" "}
-                        <Link href="/signup" className="text-yellow-500 font-semibold">
+                        <Link href="/signup" className="text-yellow-500 font-bold">
                             Sign Up
                         </Link>
                     </p>
 
-                    <p className="text-center text-xs mt-6 text-yellow-500">
-                        © 2026 YourShop
-                    </p>
+                    <div className="mt-10 flex justify-center items-center gap-2 text-xs text-gray-400">
+                        <ShieldCheck className="text-green-500 w-4 h-4" />
+                        Secure Login • © 2026 YourShop
+                    </div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }

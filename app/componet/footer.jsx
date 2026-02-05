@@ -5,68 +5,124 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaWhatsapp } from "react-icons/fa"
 
 export default function Footer() {
     return (
-        <footer className="bg-yellow-400 text-black mt-16 border-t-4 border-yellow-500">
-            <div className="container mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <footer className="mt-24 bg-yellow-400 text-black relative overflow-hidden">
 
-                {/* Brand */}
-                <div>
-                    <h2 className="text-2xl font-bold mb-3">My Pizza</h2>
-                    <p className="text-sm leading-relaxed">
-                        Delicious pizzas, fast delivery, and best service in town.
-                    </p>
-                </div>
+            {/* Top Accent */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-yellow-500" />
 
-                {/* Quick Links */}
-                <div>
-                    <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
-                    <ul className="space-y-2 text-sm">
-                        <li><Link href="/" className="hover:underline">Home</Link></li>
-                        <li><Link href="/menu" className="hover:underline">Menu</Link></li>
-                        <li><Link href="/order" className="hover:underline">Order</Link></li>
-                        <li><Link href="/booking" className="hover:underline">Booking</Link></li>
-                    </ul>
-                </div>
+            <div className="max-w-7xl mx-auto px-6 pt-20 pb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12">
 
-                {/* Customer Support */}
-                <div>
-                    <h3 className="text-lg font-semibold mb-3">Customer Support</h3>
-                    <ul className="space-y-2 text-sm">
-                        <li><Link href="/about" className="hover:underline">About Us</Link></li>
-                        <li><Link href="/contact" className="hover:underline">Contact Us</Link></li>
-                        <li><Link href="/privacy" className="hover:underline">Privacy Policy</Link></li>
-                        <li><Link href="/terms" className="hover:underline">Terms & Conditions</Link></li>
-                    </ul>
-                </div>
+                    {/* BRAND */}
+                    <div className="lg:col-span-4 space-y-5">
+                        <h2 className="text-3xl font-black uppercase tracking-tight">
+                            My<span className="text-black/60">Pizza</span>
+                        </h2>
+                        <p className="text-sm opacity-80 leading-relaxed max-w-sm">
+                            Delicious pizzas, fast delivery, and best service in town.
+                        </p>
 
-                {/* Social + Contact */}
-                <div>
-                    <h3 className="text-lg font-semibold mb-3">Connect With Us</h3>
-
-                    <div className="flex gap-3 mb-4">
-                        <a href="#" className="p-2 border-2 border-black rounded-full hover:bg-black hover:text-yellow-400 transition">
-                            <FaFacebookF />
-                        </a>
-                        <a href="#" className="p-2 border-2 border-black rounded-full hover:bg-black hover:text-yellow-400 transition">
-                            <FaInstagram />
-                        </a>
-                        <a href="#" className="p-2 border-2 border-black rounded-full hover:bg-black hover:text-yellow-400 transition">
-                            <FaTwitter />
-                        </a>
-                        <a href="#" className="p-2 border-2 border-black rounded-full hover:bg-black hover:text-yellow-400 transition">
-                            <FaWhatsapp />
-                        </a>
+                        {/* Social */}
+                        <div className="flex gap-3 pt-4">
+                            {[
+                                { Icon: FaFacebookF },
+                                { Icon: FaInstagram },
+                                { Icon: FaTwitter },
+                                { Icon: FaWhatsapp },
+                            ].map((item, i) => (
+                                <a
+                                    key={i}
+                                    href="#"
+                                    className="w-10 h-10 rounded-xl bg-white text-yellow-500 flex items-center justify-center hover:bg-black hover:text-yellow-400 transition-all hover:-translate-y-1 shadow-md"
+                                >
+                                    <item.Icon size={16} />
+                                </a>
+                            ))}
+                        </div>
                     </div>
 
-                    <p className="text-sm">
-                        📞 +91 98765 43210 <br />
-                        ✉ support@mypizza.com
-                    </p>
-                </div>
-            </div>
+                    {/* QUICK LINKS */}
+                    <div className="lg:col-span-2">
+                        <h3 className="text-[11px] font-black uppercase tracking-[0.3em] mb-8">
+                            Quick Links
+                        </h3>
+                        <ul className="space-y-4">
+                            {[
+                                { name: "Home", path: "/" },
+                                { name: "Menu", path: "/menu" },
+                                { name: "Order", path: "/order" },
+                                { name: "Booking", path: "/booking" },
+                            ].map((item) => (
+                                <li key={item.name}>
+                                    <Link
+                                        href={item.path}
+                                        className="text-xs font-bold uppercase tracking-widest opacity-70 hover:opacity-100 hover:underline transition"
+                                    >
+                                        {item.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-            {/* Bottom Bar */}
-            <div className="bg-yellow-500 text-center py-4 text-sm border-t border-black/20">
-                © {new Date().getFullYear()} My Pizza. All rights reserved.
+                    {/* SUPPORT */}
+                    <div className="lg:col-span-2">
+                        <h3 className="text-[11px] font-black uppercase tracking-[0.3em] mb-8">
+                            Support
+                        </h3>
+                        <ul className="space-y-4">
+                            {[
+                                { name: "About Us", path: "/about" },
+                                { name: "Contact Us", path: "/contact" },
+                                { name: "Privacy Policy", path: "/privacy" },
+                                { name: "Terms & Conditions", path: "/terms" },
+                            ].map((item) => (
+                                <li key={item.name}>
+                                    <Link
+                                        href={item.path}
+                                        className="text-xs font-bold uppercase tracking-widest opacity-70 hover:opacity-100 hover:underline transition"
+                                    >
+                                        {item.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* CONTACT */}
+                    <div className="lg:col-span-4">
+                        <div className="p-8 rounded-3xl bg-white shadow-xl border border-yellow-500/30">
+                            <h3 className="text-sm font-black uppercase tracking-widest mb-6">
+                                Customer Support
+                            </h3>
+
+                            <p className="text-xs font-bold tracking-widest uppercase">
+                                📞 +91 98765 43210
+                            </p>
+                            <p className="text-xs font-bold tracking-widest uppercase mt-2">
+                                ✉ support@mypizza.com
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* BOTTOM BAR */}
+                <div className="mt-20 pt-8 border-t border-black/20 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-[10px] font-black uppercase tracking-[0.25em] opacity-70">
+                        © {new Date().getFullYear()} My Pizza. All Rights Reserved.
+                    </p>
+
+                    <div className="flex gap-6">
+                        {["Visa", "Mastercard", "UPI"].map((item) => (
+                            <span
+                                key={item}
+                                className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+                            >
+                                {item}
+                            </span>
+                        ))}
+                    </div>
+                </div>
             </div>
         </footer>
     );

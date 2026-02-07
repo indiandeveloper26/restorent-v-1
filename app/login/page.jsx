@@ -158,7 +158,7 @@ export default function LoginPage() {
 
                     <div className="mt-10 flex justify-center items-center gap-2 text-xs text-gray-400">
                         <ShieldCheck className="text-green-500 w-4 h-4" />
-                        Secure Login • © 2026 YourShop
+                        Secure Login • © 2026 YourShopp
                     </div>
                 </div>
             </motion.div>

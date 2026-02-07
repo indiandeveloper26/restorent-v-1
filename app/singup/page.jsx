@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { login } from "../Redux/authslice";
+import { login } from "../redux/authslice";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Lock, Eye, EyeOff, Loader2, ShieldCheck } from "lucide-react";
 
@@ -209,7 +209,7 @@ export default function SignupPage() {
 
                     <div className="mt-10 flex justify-center items-center gap-2 text-xs text-gray-400">
                         <ShieldCheck className="text-green-500 w-4 h-4" />
-                        Secure Signup • © 2026 YourShop
+                        Secure Signup • © 2026 YourShopp
                     </div>
                 </div>
             </motion.div>

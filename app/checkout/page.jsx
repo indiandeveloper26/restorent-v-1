@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useTheme } from "../context/contextthem";
 import { motion } from "framer-motion";
 import { MapPin, CreditCard, ShieldCheck, Truck, ShoppingBag, ArrowLeft } from "lucide-react";
+import axios from "axios";
 
 export default function CheckoutPage() {
     const router = useRouter();
@@ -59,8 +60,10 @@ export default function CheckoutPage() {
             if (paymentMethod === "Online") {
                 router.push(`/payment/${data.order._id}`);
             } else {
-                toast.info("Payment will be collected on delivery");
-                router.push("/orders");
+
+                console.log('codorder')
+
+                router.push("/order");
             }
         } catch (err) {
             toast.error("Something went wrong!");

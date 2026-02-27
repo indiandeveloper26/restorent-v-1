@@ -9,5 +9,5 @@ export async function GET() {
     await dbConnect()
 
     let data = await Restaurant.findById('69973a6fd7f2aeefc96217e1')
-    return NextResponse.json({ "version": "v-2" })
+    return NextResponse.json({ "version": data })
 }

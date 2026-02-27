@@ -4,23 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { login } from "../redux/authslice";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, Loader2, ArrowRight, ShieldCheck } from "lucide-react";
 import { useTheme } from "../context/contextthem";
-
 
 export default function LoginPage() {
     const [form, setForm] = useState({ email: "", password: "" });
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
-
     const router = useRouter();
-
-    let { loginuser } = useTheme()
+    const { loginuser } = useTheme();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,12 +34,12 @@ export default function LoginPage() {
             if (data.login === "true") {
                 localStorage.setItem("id", data.user._id);
                 localStorage.setItem("user", JSON.stringify(data.user));
-                // dispatch(login({ userdata: data.user }));
-                loginuser({ userdata: data.user })
-                console.log(data)
-                toast.success("Login successful!");
+                loginuser({ userdata: data.user });
+                toast.success("Welcome back!");
+                router.push("/pizza");
             } else {
                 setMessage("Invalid credentials");
+                toast.error("Invalid credentials");
             }
         } catch {
             setMessage("Something went wrong");
@@ -54,118 +49,109 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] px-4">
+        <div className="min-h-screen flex items-center justify-center bg-white px-4 selection:bg-yellow-200">
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)] overflow-hidden"
+                className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 bg-white rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/40 overflow-hidden"
             >
-
-                {/* LEFT BRAND */}
-                <div className="hidden md:flex flex-col justify-between p-12 bg-gradient-to-br from-yellow-400 to-yellow-500 relative">
-                    <h2 className="text-white text-3xl font-black tracking-tight">
-                        Your<span className="opacity-70">Shop</span>
+                {/* LEFT BRAND SECTION */}
+                <div className="hidden md:flex flex-col justify-between p-12 bg-yellow-400 relative">
+                    <h2 className="text-black text-3xl font-black italic tracking-tighter">
+                        PIZZA<span className="opacity-40">GO.</span>
                     </h2>
 
-                    <div>
-                        <Image
-                            src="/img/login.jpg"
-                            alt="Login"
-                            width={420}
-                            height={420}
-                            className="rounded-3xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500"
-                        />
-                        <h3 className="mt-8 text-white text-2xl font-bold">
-                            Secure & Fast Login
+                    <div className="relative z-10">
+                        <div className="relative">
+                            <Image
+                                src="/img/login.jpg"
+                                alt="Login"
+                                width={420}
+                                height={420}
+                                className="rounded-[2.5rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700 border-[6px] border-white object-cover"
+                            />
+                        </div>
+                        <h3 className="mt-12 text-black text-5xl font-black italic uppercase tracking-tighter leading-[0.9]">
+                            Ready For <br /> More Slices?
                         </h3>
-                        <p className="text-white/80 text-sm mt-2">
-                            Access your account with confidence.
-                        </p>
                     </div>
 
                     <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-white/20 rounded-full blur-3xl" />
                 </div>
 
-                {/* RIGHT FORM */}
-                <div className="p-8 md:p-16 flex flex-col justify-center">
-                    <h1 className="text-4xl font-black mb-2 text-gray-900">
-                        Welcome Back
-                    </h1>
-                    <p className="text-sm text-gray-400 mb-8">
-                        Login to continue
-                    </p>
+                {/* RIGHT FORM SECTION */}
+                <div className="p-8 md:p-20 flex flex-col justify-center bg-white">
+                    <div className="mb-12">
+                        <h1 className="text-6xl font-black italic tracking-tighter uppercase text-black leading-none">
+                            Login<span className="text-yellow-400">.</span>
+                        </h1>
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] mt-4">
+                            Welcome back, explorer
+                        </p>
+                    </div>
 
-                    <AnimatePresence>
+                    <AnimatePresence mode="wait">
                         {message && (
                             <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="mb-6 p-4 rounded-xl bg-red-100 text-red-600 text-sm font-semibold"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                className="mb-8 p-4 rounded-2xl bg-red-50 border-l-4 border-red-500 text-red-600 text-[10px] font-black uppercase tracking-widest"
                             >
                                 {message}
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Email Field */}
+                        <div className="relative group">
+                            <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-black transition-colors" size={18} />
                             <input
                                 type="email"
-                                placeholder="Email address"
+                                placeholder="EMAIL ADDRESS"
                                 required
                                 value={form.email}
-                                onChange={(e) =>
-                                    setForm({ ...form, email: e.target.value })
-                                }
-                                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-yellow-400 outline-none font-semibold"
+                                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                className="w-full pl-16 pr-8 py-6 rounded-3xl bg-gray-50 border border-transparent focus:bg-white focus:border-black outline-none font-black text-black placeholder:text-gray-300 placeholder:font-black placeholder:text-[10px] placeholder:tracking-[0.2em] transition-all shadow-sm"
                             />
                         </div>
 
-                        <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                        {/* Password Field */}
+                        <div className="relative group">
+                            <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-black transition-colors" size={18} />
                             <input
                                 type="password"
-                                placeholder="Password"
+                                placeholder="YOUR PASSWORD"
                                 required
                                 value={form.password}
-                                onChange={(e) =>
-                                    setForm({ ...form, password: e.target.value })
-                                }
-                                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-yellow-400 outline-none font-semibold"
+                                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                className="w-full pl-16 pr-8 py-6 rounded-3xl bg-gray-50 border border-transparent focus:bg-white focus:border-black outline-none font-black text-black placeholder:text-gray-300 placeholder:font-black placeholder:text-[10px] placeholder:tracking-[0.2em] transition-all shadow-sm"
                             />
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full py-5 rounded-2xl font-black text-white tracking-widest flex items-center justify-center gap-2 transition ${loading
-                                ? "bg-yellow-300"
-                                : "bg-yellow-400 hover:bg-yellow-500 shadow-xl shadow-yellow-400/30"
+                            className={`w-full py-7 rounded-[2rem] font-black text-black tracking-[0.3em] uppercase text-xs flex items-center justify-center gap-4 transition-all active:scale-95 shadow-2xl shadow-yellow-200/50 ${loading
+                                ? "bg-gray-100 text-gray-400"
+                                : "bg-yellow-400 hover:bg-black hover:text-white"
                                 }`}
                         >
-                            {loading ? (
-                                <Loader2 className="animate-spin" />
-                            ) : (
-                                <>
-                                    LOGIN
-                                    <ArrowRight />
-                                </>
-                            )}
+                            {loading ? <Loader2 className="animate-spin" /> : <>Access Account <ArrowRight size={20} /></>}
                         </button>
                     </form>
 
-                    <p className="text-center text-sm mt-6 text-gray-500">
-                        Don&apos;t have an account?{" "}
-                        <Link href="/singup" className="text-yellow-500 font-bold">
-                            Sign Up
+                    <p className="text-center text-[10px] font-black uppercase tracking-[0.2em] mt-10 text-gray-400">
+                        New to the shop?{" "}
+                        <Link href="/singup" className="text-black font-black border-b-2 border-yellow-400 pb-1 hover:bg-yellow-50 transition-colors">
+                            Create Account
                         </Link>
                     </p>
 
-                    <div className="mt-10 flex justify-center items-center gap-2 text-xs text-gray-400">
-                        <ShieldCheck className="text-green-500 w-4 h-4" />
-                        Secure Login • © 2026 YourShopp
+                    <div className="mt-12 flex justify-center items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-gray-200">
+                        <ShieldCheck size={14} />
+                        Secure Session • PIZZAGO
                     </div>
                 </div>
             </motion.div>

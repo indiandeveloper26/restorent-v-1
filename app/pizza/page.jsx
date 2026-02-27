@@ -4,49 +4,22 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "../context/contextthem";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingBag, Filter, Star, Pizza, Zap } from "lucide-react";
-import ProductSkeletonCard from "../componet/skeleten"; // Ensure path is correct
+import { Search, ShoppingBag, Filter, Star, Pizza, Loader2 } from "lucide-react";
+import ProductSkeletonCard from "../componet/skeleten";
 import FastAutoSlider from "../componet/slider";
-import axios from "axios";
 
 export default function ProductsClient() {
     const router = useRouter();
-    const { products = [], fetchProducts, userdataaa, loading, error, theme } = useTheme();
+    const { products = [], fetchProducts, loading, error, theme } = useTheme();
 
     const [search, setSearch] = useState("");
     const [filtered, setFiltered] = useState([]);
     const isDark = theme === "dark";
 
-    // 🔥 Initial Fetch
     useEffect(() => {
         fetchProducts();
     }, []);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // 🔍 Filter Products
     useEffect(() => {
         const results = products.filter((p) =>
             p?.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -55,17 +28,36 @@ export default function ProductsClient() {
         setFiltered(results);
     }, [search, products]);
 
-    if (loading) return <ProductSkeletonCard />;
+    // 🔥 LOADING STATE (Pure White Background)
+    if (loading) return (
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+            <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                className="mb-8"
+            >
+                <Pizza size={48} className="text-yellow-400" />
+            </motion.div>
+            <ProductSkeletonCard />
+        </div>
+    );
 
+    // 🔥 ERROR STATE (Clean White Background)
     if (error)
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen">
-                <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+            <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+                <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mb-6 border border-red-100">
                     <span className="text-3xl">⚠️</span>
                 </div>
-                <p className="text-red-500 font-black tracking-widest uppercase">
+                <p className="text-black font-black tracking-tighter uppercase text-xl italic">
                     Oops! {error}
                 </p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="mt-6 px-8 py-3 bg-black text-white rounded-2xl font-black uppercase text-[10px] tracking-widest"
+                >
+                    Try Again
+                </button>
             </div>
         );
 
@@ -117,7 +109,6 @@ export default function ProductsClient() {
 
             {/* Product Grid */}
             <div className="container mx-auto px-6 py-16">
-                {/* Grid Header */}
                 <div className="flex items-center justify-between mb-12">
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-1 bg-yellow-500 rounded-full" />
@@ -133,7 +124,6 @@ export default function ProductsClient() {
                     </button>
                 </div>
 
-                {/* Responsive Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-10">
                     <AnimatePresence mode="popLayout">
                         {filtered.map((product, index) => (
@@ -146,7 +136,6 @@ export default function ProductsClient() {
                                 onClick={() => router.push(`/pizza/${product.slug}`)}
                                 className="group relative flex flex-col cursor-pointer"
                             >
-                                {/* Product Image */}
                                 <div
                                     className={`aspect-square w-full overflow-hidden rounded-[2.5rem] relative transition-all duration-500 ${isDark ? "bg-zinc-900 shadow-2xl" : "bg-gray-50 shadow-lg shadow-gray-200/50"
                                         }`}
@@ -156,26 +145,19 @@ export default function ProductsClient() {
                                         alt={product.name}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
-
-                                    {/* Price Badge */}
                                     <div className="absolute bottom-6 left-6">
                                         <div className="bg-white/90 backdrop-blur-md text-black px-4 py-2 rounded-2xl font-black text-lg italic shadow-xl">
                                             ₹{product.discountPrice || product.price}
                                         </div>
                                     </div>
-
-                                    {/* Category Tag */}
                                     <div className="absolute top-6 right-6">
                                         <span className="bg-yellow-400 text-black px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">
                                             {product.category}
                                         </span>
                                     </div>
-
-                                    {/* Hover Overlay */}
                                     <div className="absolute inset-0 bg-yellow-400 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                                 </div>
 
-                                {/* Product Info */}
                                 <div className="pt-6 px-2">
                                     <div className="flex justify-between items-center">
                                         <h2 className="text-xl font-black uppercase tracking-tighter truncate group-hover:text-yellow-500 transition-colors">
@@ -207,7 +189,6 @@ export default function ProductsClient() {
                     </AnimatePresence>
                 </div>
 
-                {/* Empty State */}
                 {filtered.length === 0 && (
                     <div className="py-32 text-center">
                         <Pizza className="mx-auto w-16 h-16 text-gray-200 mb-6" />

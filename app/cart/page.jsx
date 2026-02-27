@@ -28,6 +28,7 @@ export default function CartPage() {
         }
         try {
             const res = await axios.get(`http://localhost:3000/backend/api/cart/get/${userId}`);
+            console.log('cartdatat', res)
             setCart(res.data.cart || []);
         } catch (err) {
             console.error("Cart fetch error:", err);

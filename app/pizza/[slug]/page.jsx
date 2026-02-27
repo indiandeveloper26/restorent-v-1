@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowLeft, ShoppingBag, Zap, Truck, ShieldCheck, Star } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Zap, Truck, ShieldCheck, Star, Pizza } from "lucide-react";
 import { fetchProducts } from "../../redux/producttahnk";
 import { useTheme } from "../../context/contextthem";
 
@@ -22,8 +22,6 @@ export default function ProductDetailPage() {
     const [activeImage, setActiveImage] = useState(0);
     const [adding, setAdding] = useState(false);
 
-    console.log('pizzzausreid', userdataaa?._id)
-
     useEffect(() => {
         if (!products.length) dispatch(fetchProducts());
     }, [products.length, dispatch]);
@@ -38,17 +36,19 @@ export default function ProductDetailPage() {
     const handleAddToCart = async () => {
         if (!userdataaa) return toast.error("Please login first");
 
-        console.log('pizzzausreid', userdataaa._id)
         setAdding(true);
         try {
-            let dta = await fetch("/backend/api/cart/add", {
+            let res = await fetch("/backend/api/cart/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId: userdataaa._id, productId: product._id }),
             });
 
-            console.log('cardddta', dta)
-            toast.success("Added to cart");
+            if (res.ok) {
+                toast.success("Added to cart");
+            } else {
+                toast.error("Failed to add");
+            }
         } catch {
             toast.error("Something went wrong");
         } finally {
@@ -62,115 +62,152 @@ export default function ProductDetailPage() {
         router.push("/checkout");
     };
 
-    if (loading) return <div className="text-center py-20">Loading...</div>;
-    if (!product) return <div className="text-center py-20">Product not found</div>;
+    // 🔥 Premium Loading State
+    if (loading) return (
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+                <Pizza size={40} className="text-yellow-400" />
+            </motion.div>
+            <p className="mt-4 font-black uppercase tracking-[0.3em] text-[10px] text-gray-400">Preparing Details...</p>
+        </div>
+    );
+
+    if (!product) return (
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center text-center px-4">
+            <h2 className="text-4xl font-black italic uppercase tracking-tighter">Pizza Not Found</h2>
+            <button onClick={() => router.push("/pizza")} className="mt-6 text-yellow-500 font-black border-b-2 border-yellow-400">Go Back Menu</button>
+        </div>
+    );
 
     return (
-        <section className="bg-white min-h-screen pb-20">
-            {/* HEADER */}
-            <div className="border-b bg-yellow-50">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between">
+        <section className="bg-white min-h-screen pb-20 selection:bg-yellow-200">
+            {/* HEADER / BREADCRUMB */}
+            <div className="bg-white border-b border-gray-100">
+                <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
                     <button
                         onClick={() => router.back()}
-                        className="flex items-center gap-2 text-sm font-bold text-yellow-600 hover:text-black"
+                        className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-black"
                     >
-                        <ArrowLeft size={16} /> Back
+                        <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-yellow-400 transition-colors">
+                            <ArrowLeft size={14} />
+                        </div>
+                        Back to Menu
                     </button>
-                    <span className="text-[11px] font-black tracking-widest text-gray-400 uppercase">
-                        {product.category} / {product.name}
+                    <span className="hidden md:block text-[9px] font-black tracking-[0.3em] text-gray-300 uppercase">
+                        {product.category} <span className="mx-2">/</span> {product.name}
                     </span>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
 
-                {/* LEFT IMAGE */}
-                <div className="lg:col-span-7 grid md:grid-cols-12 gap-4">
-                    <div className="md:col-span-2 flex md:flex-col gap-3">
+                {/* LEFT: IMAGE GALLERY */}
+                <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-6">
+                    {/* Thumbnails */}
+                    <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible pb-4 md:pb-0">
                         {product.images?.map((img, i) => (
                             <button
                                 key={i}
                                 onClick={() => setActiveImage(i)}
-                                className={`w-20 h-20 rounded-xl overflow-hidden border-2
-                                ${activeImage === i ? "border-yellow-400 scale-105" : "border-gray-100 opacity-60"}`}
+                                className={`relative flex-shrink-0 w-20 h-20 rounded-3xl overflow-hidden border-2 transition-all duration-300
+                                ${activeImage === i ? "border-black scale-105 shadow-xl shadow-black/5" : "border-gray-100 opacity-50 hover:opacity-100"}`}
                             >
                                 <Image src={img} alt="" fill className="object-cover" />
                             </button>
                         ))}
                     </div>
 
+                    {/* Main Image */}
                     <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="md:col-span-10 relative aspect-[4/5] rounded-[2rem] overflow-hidden bg-yellow-50"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="relative flex-grow aspect-square md:aspect-[4/5] rounded-[3.5rem] overflow-hidden bg-gray-50 shadow-2xl shadow-gray-200/50 group"
                     >
                         <Image
                             src={product.images?.[activeImage]}
                             alt={product.name}
                             fill
-                            className="object-cover hover:scale-110 transition duration-700"
+                            className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                            priority
                         />
-                        <span className="absolute top-6 left-6 bg-white px-4 py-2 rounded-full text-xs font-black flex items-center gap-2">
-                            <Star size={12} className="text-yellow-400 fill-yellow-400" /> 4.9
-                        </span>
+                        <div className="absolute top-8 left-8 bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-2xl text-[11px] font-black flex items-center gap-2 shadow-xl">
+                            <Star size={14} className="text-yellow-400 fill-yellow-400" /> 4.9 RATING
+                        </div>
                     </motion.div>
                 </div>
 
-                {/* RIGHT INFO */}
-                <div className="lg:col-span-5 space-y-8 sticky top-24">
-                    <div>
-                        <span className="text-yellow-500 font-black text-xs uppercase tracking-[0.3em]">
+                {/* RIGHT: PRODUCT INFO */}
+                <div className="lg:col-span-5 flex flex-col justify-center">
+                    <div className="mb-10">
+                        <span className="bg-yellow-400 text-black px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg shadow-yellow-200">
                             {product.category}
                         </span>
-                        <h1 className="text-4xl font-black mt-2">
-                            {product.name}
+                        <h1 className="text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-black mt-6 leading-none">
+                            {product.name}<span className="text-yellow-400">.</span>
                         </h1>
-                        <p className="text-gray-600 mt-4">{product.description}</p>
+                        <p className="text-gray-400 mt-6 text-sm font-medium leading-relaxed max-w-md">
+                            {product.description}
+                        </p>
                     </div>
 
-                    <div className="flex items-end gap-4">
-                        <span className="text-4xl font-black text-yellow-500">
-                            ₹{product.price}
-                        </span>
-                        {product.discountPrice && (
-                            <span className="line-through text-gray-400">
-                                ₹{product.discountPrice}
+                    <div className="flex items-center gap-6 mb-12">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest mb-1">Price tag</span>
+                            <span className="text-5xl font-black text-black italic">
+                                ₹{product.price}
                             </span>
+                        </div>
+                        {product.discountPrice && (
+                            <div className="flex flex-col mt-4">
+                                <span className="line-through text-gray-300 font-bold text-xl">
+                                    ₹{product.discountPrice}
+                                </span>
+                            </div>
                         )}
                     </div>
 
-                    {/* TRUST */}
-                    <div className="grid grid-cols-3 gap-4 py-6 border-y">
+                    {/* FEATURES GRID */}
+                    <div className="grid grid-cols-3 gap-6 py-10 border-y border-gray-100 mb-12">
                         {[
-                            { Icon: Truck, label: "Fast Delivery" },
-                            { Icon: ShieldCheck, label: "Original" },
-                            { Icon: Zap, label: "Hot Deal" },
+                            { Icon: Truck, label: "Express", sub: "Delivery" },
+                            { Icon: ShieldCheck, label: "Authentic", sub: "Recipe" },
+                            { Icon: Zap, label: "Fresh", sub: "Baking" },
                         ].map((t, i) => (
-                            <div key={i} className="text-center">
-                                <div className="w-10 h-10 mx-auto rounded-full bg-yellow-100 flex items-center justify-center">
-                                    <t.Icon size={18} className="text-yellow-500" />
+                            <div key={i} className="flex flex-col items-center text-center group">
+                                <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-3 group-hover:bg-yellow-400 transition-colors">
+                                    <t.Icon size={20} className="text-black" />
                                 </div>
-                                <p className="text-[10px] mt-2 font-bold uppercase">{t.label}</p>
+                                <p className="text-[9px] font-black uppercase tracking-tighter text-black">{t.label}</p>
+                                <p className="text-[8px] font-bold uppercase tracking-widest text-gray-300">{t.sub}</p>
                             </div>
                         ))}
                     </div>
 
-                    {/* BUTTONS */}
-                    <div className="space-y-4">
+                    {/* ACTIONS */}
+                    <div className="flex flex-col gap-4">
                         <button
                             onClick={handleAddToCart}
                             disabled={adding}
-                            className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl bg-black text-yellow-400 font-black uppercase tracking-widest hover:bg-gray-900"
+                            className={`group w-full flex items-center justify-center gap-4 py-7 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95 shadow-2xl ${adding
+                                ? "bg-gray-100 text-gray-400"
+                                : "bg-black text-white hover:bg-yellow-400 hover:text-black shadow-black/10"
+                                }`}
                         >
-                            <ShoppingBag size={18} /> {adding ? "ADDING..." : "ADD TO CART"}
+                            <ShoppingBag size={20} className={adding ? "animate-bounce" : "group-hover:rotate-12 transition-transform"} />
+                            {adding ? "Adding to Box..." : "Add to Cart"}
                         </button>
 
                         <button
                             onClick={handleOrderNow}
-                            className="w-full py-5 rounded-2xl bg-yellow-400 text-black font-black uppercase tracking-widest hover:bg-yellow-500"
+                            className="w-full py-7 rounded-[2rem] bg-yellow-400 text-black font-black uppercase tracking-[0.2em] text-[11px] hover:bg-black hover:text-white transition-all active:scale-95 shadow-2xl shadow-yellow-200/50"
                         >
-                            BUY NOW
+                            Order Now
                         </button>
+                    </div>
+
+                    <div className="mt-10 flex items-center justify-center gap-2 text-[9px] font-black text-gray-300 uppercase tracking-widest">
+                        <ShieldCheck size={14} className="text-green-500" />
+                        100% Secure Checkout
                     </div>
                 </div>
             </div>

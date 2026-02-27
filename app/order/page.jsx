@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Package, Clock, CheckCircle2, ShoppingBag, ChevronRight } from "lucide-react";
+import { Package, Clock, CheckCircle2, ShoppingBag, ChevronRight, Pizza } from "lucide-react";
 import ProductSkeletonCard from "../componet/skeleten";
 import { useTheme } from "../context/contextthem";
 
@@ -16,21 +16,18 @@ export default function OrdersPage() {
     const [error, setError] = useState("");
     const [userId, setUserId] = useState(null);
 
-    // Load userId from localStorage
     useEffect(() => {
         const storedId = localStorage.getItem("id");
         if (storedId) {
             setUserId(storedId);
         } else {
-            setError("Please login to view order history.");
+            setError("Please login to view history");
             setLoading(false);
         }
     }, []);
 
-    // Fetch orders when userId is available
     useEffect(() => {
         if (!userId) return;
-
         const fetchOrders = async () => {
             setLoading(true);
             try {
@@ -41,124 +38,147 @@ export default function OrdersPage() {
                     setError("Failed to fetch orders");
                 }
             } catch (err) {
-                console.error("Error fetching orders:", err);
                 setError("Something went wrong");
                 setOrders([]);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchOrders();
     }, [userId]);
 
-    if (loading) return <div className="p-10"><ProductSkeletonCard /></div>;
+    // 🔥 PURE WHITE LOADING
+    if (loading) return (
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+                <Pizza size={40} className="text-yellow-400" />
+            </motion.div>
+            <p className="mt-4 font-black uppercase tracking-[0.3em] text-[10px] text-black">Fetching your history...</p>
+        </div>
+    );
 
     if (error || !orders.length) return (
-        <div className={`h-screen flex flex-col items-center justify-center space-y-4 ${isDark ? "bg-[#0f1115]" : "bg-yellow-50/30"}`}>
-            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center">
-                <ShoppingBag size={40} className="text-yellow-600 opacity-40" />
+        <div className={`h-screen flex flex-col items-center justify-center space-y-6 bg-white`}>
+            <div className="w-24 h-24 bg-gray-50 rounded-[2.5rem] flex items-center justify-center border-2 border-dashed border-gray-100">
+                <ShoppingBag size={40} className="text-gray-200" />
             </div>
-            <p className="text-xl font-black italic tracking-tighter uppercase opacity-40 text-yellow-800">
-                {error || "No Orders Found"}
-            </p>
+            <div className="text-center">
+                <h2 className="text-3xl font-black italic uppercase tracking-tighter text-black">No Orders Yet</h2>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mt-2">{error || "Your pizza journey starts here."}</p>
+            </div>
+            <button onClick={() => window.location.href = '/pizza'} className="px-8 py-4 bg-black text-white font-black uppercase text-[10px] tracking-widest rounded-2xl hover:bg-yellow-400 hover:text-black transition-all">
+                Go to Menu
+            </button>
         </div>
     );
 
     return (
-        <div className={`min-h-screen py-12 px-4 sm:px-8 ${isDark ? "bg-[#0f1115] text-white" : "bg-yellow-50/30 text-gray-900"}`}>
+        <div className={`min-h-screen py-20 px-6 selection:bg-yellow-200 transition-colors duration-500 ${isDark ? "bg-[#0f1115] text-white" : "bg-white text-gray-900"}`}>
             <div className="max-w-6xl mx-auto">
 
-                {/* Header */}
-                <div className="flex items-end justify-between mb-12">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                     <div>
-                        <span className="text-yellow-600 font-black text-xs uppercase tracking-[0.3em] mb-2 block">
-                            Your Purchase History
+                        <span className="bg-yellow-400 text-black px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg shadow-yellow-100">
+                            Archive
                         </span>
-                        <h1 className="text-5xl font-black italic tracking-tighter uppercase">
+                        <h1 className="text-6xl font-black italic tracking-tighter uppercase mt-6 leading-none">
                             My Orders<span className="text-yellow-500">.</span>
                         </h1>
                     </div>
-                    <div className="hidden md:block text-right">
-                        <p className="text-xs font-bold opacity-40 uppercase tracking-widest">Total History</p>
-                        <p className="text-2xl font-black italic text-yellow-600">{orders.length} Orders</p>
+                    <div className="flex items-center gap-4 bg-gray-50 p-6 rounded-[2rem] border border-gray-100">
+                        <div className="text-right">
+                            <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Lifetime Orders</p>
+                            <p className="text-3xl font-black italic text-black leading-none mt-1">{orders.length}</p>
+                        </div>
+                        <div className="w-12 h-12 rounded-2xl bg-black flex items-center justify-center text-white">
+                            <Package size={20} />
+                        </div>
                     </div>
                 </div>
 
                 {/* Orders Grid */}
-                <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
+                <div className="grid gap-10 grid-cols-1 lg:grid-cols-2">
                     {orders.map((order, index) => (
                         <motion.div
                             key={order._id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className={`group relative rounded-[2.5rem] overflow-hidden transition-all hover:shadow-2xl hover:shadow-yellow-500/10 
-                                ${isDark ? "bg-gray-800/50 border border-gray-700" : "bg-white border border-yellow-100 shadow-sm"}`}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.05 }}
+                            className={`group relative rounded-[3rem] overflow-hidden transition-all hover:shadow-2xl hover:shadow-gray-200/50 
+                                ${isDark ? "bg-zinc-900 border border-zinc-800" : "bg-white border border-gray-100 shadow-sm"}`}
                         >
-                            <div className="p-6 md:p-8">
-                                {/* Order ID and Status */}
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-3 rounded-2xl transition-colors ${isDark ? "bg-gray-700 text-yellow-500" : "bg-yellow-50 text-yellow-600"}`}>
-                                            <Package size={20} />
+                            <div className="p-8 md:p-10">
+                                {/* Top Bar: ID & Status */}
+                                <div className="flex justify-between items-start mb-10">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${isDark ? "bg-zinc-800 text-yellow-500" : "bg-black text-yellow-400 shadow-xl shadow-black/10"}`}>
+                                            <Package size={24} strokeWidth={2.5} />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black opacity-40 uppercase tracking-widest">Tracking ID</p>
-                                            <p className="font-bold text-sm tracking-tighter">#{order._id.slice(-8).toUpperCase()}</p>
+                                            <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Order Ref</p>
+                                            <p className="font-black text-lg tracking-tighter italic">#{order._id.slice(-8).toUpperCase()}</p>
                                         </div>
                                     </div>
 
-                                    <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest
-                                        ${order.status === "Paid" ? "bg-green-500/10 text-green-500" : "bg-yellow-500/10 text-yellow-600"}`}>
-                                        {order.status === "Paid" ? <CheckCircle2 size={12} /> : <Clock size={12} />}
+                                    <div className={`flex items-center gap-2 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] shadow-sm
+                                        ${order.status === "Paid" ? "bg-green-50 text-green-600 border border-green-100" : "bg-yellow-50 text-yellow-600 border border-yellow-100"}`}>
+                                        {order.status === "Paid" ? <CheckCircle2 size={12} strokeWidth={3} /> : <Clock size={12} strokeWidth={3} />}
                                         {order.status}
                                     </div>
                                 </div>
 
-                                {/* Items List */}
-                                <div className="space-y-4 mb-8">
+                                {/* Items Breakdown */}
+                                <div className="space-y-6 mb-10">
                                     {order.products.map((item, idx) => (
-                                        <div key={idx} className="flex items-center gap-4">
-                                            <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 border border-yellow-100">
+                                        <div key={idx} className="flex items-center gap-5 group/item">
+                                            <div className="relative w-16 h-16 rounded-[1.5rem] overflow-hidden bg-gray-50 border border-gray-100 flex-shrink-0 group-hover/item:scale-110 transition-transform">
                                                 <Image
                                                     src={item.product?.images?.[0] || "/placeholder.png"}
                                                     alt="" fill className="object-cover"
                                                 />
                                             </div>
                                             <div className="flex-grow">
-                                                <p className="text-sm font-black uppercase italic tracking-tighter line-clamp-1">
-                                                    {item.product?.name || "Premium Item"}
+                                                <p className="text-base font-black uppercase italic tracking-tighter text-black leading-tight">
+                                                    {item.product?.name || "Legendary Pizza"}
                                                 </p>
-                                                <p className="text-[10px] font-bold opacity-40 uppercase">
-                                                    Qty: {item.quantity} • ₹{item.price || item.product?.price}
-                                                </p>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className="text-[10px] font-black text-gray-300 uppercase">Qty: {item.quantity}</span>
+                                                    <span className="w-1 h-1 rounded-full bg-gray-200"></span>
+                                                    <span className="text-[10px] font-black text-yellow-600 uppercase">₹{item.price || item.product?.price}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
 
-                                {/* Footer Stats */}
-                                <div className="flex items-center justify-between pt-6 border-t border-dashed border-yellow-200/50">
+                                {/* Billing Footer */}
+                                <div className="flex items-center justify-between pt-8 border-t border-dashed border-gray-100">
                                     <div>
-                                        <p className="text-[10px] font-black opacity-40 uppercase tracking-widest text-yellow-700">Total Bill</p>
-                                        <p className="text-3xl font-black italic text-yellow-600">₹{order.totalPrice}</p>
+                                        <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Net Amount</p>
+                                        <p className="text-4xl font-black italic text-black leading-none">
+                                            <span className="text-lg mr-1 tracking-normal not-italic">₹</span>{order.totalPrice}
+                                        </p>
                                     </div>
                                     <button
-                                        className={`p-4 rounded-2xl transition-all active:scale-90 shadow-lg ${isDark ? "bg-yellow-500 text-black hover:bg-yellow-400" : "bg-gray-900 text-white hover:bg-yellow-600"}`}
-                                        onClick={() => alert(`Details for: ${order._id}`)}
+                                        className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-90 shadow-xl ${isDark ? "bg-yellow-500 text-black" : "bg-black text-white hover:bg-yellow-400 hover:text-black"}`}
+                                        onClick={() => console.log(`Viewing: ${order._id}`)}
                                     >
-                                        <ChevronRight size={20} />
+                                        <ChevronRight size={24} strokeWidth={3} />
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Decorative Date Bar */}
-                            <div className={`${isDark ? "bg-gray-900/50" : "bg-yellow-50/50"} py-3 px-8 text-center border-t border-yellow-100 flex items-center justify-center gap-2`}>
-                                <Clock size={12} className="text-yellow-600 opacity-40" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40 text-yellow-800">
-                                    Purchased on {new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                </span>
+                            {/* Timestamp Bar */}
+                            <div className={`${isDark ? "bg-zinc-950/50" : "bg-gray-50/50"} py-4 px-10 border-t border-gray-50 flex items-center justify-between`}>
+                                <div className="flex items-center gap-2 opacity-40">
+                                    <Clock size={12} className="text-black" />
+                                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-black">
+                                        {new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                    </span>
+                                </div>
+                                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-300">Certified Transaction</span>
                             </div>
                         </motion.div>
                     ))}

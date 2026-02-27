@@ -9,14 +9,18 @@ import { login } from "../redux/authslice";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, Loader2, ArrowRight, ShieldCheck } from "lucide-react";
+import { useTheme } from "../context/contextthem";
+
 
 export default function LoginPage() {
     const [form, setForm] = useState({ email: "", password: "" });
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const dispatch = useDispatch();
+
     const router = useRouter();
+
+    let { loginuser } = useTheme()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,7 +38,10 @@ export default function LoginPage() {
 
             if (data.login === "true") {
                 localStorage.setItem("id", data.user._id);
-                dispatch(login({ userdata: data.user }));
+                localStorage.setItem("user", JSON.stringify(data.user));
+                // dispatch(login({ userdata: data.user }));
+                loginuser({ userdata: data.user })
+                console.log(data)
                 toast.success("Login successful!");
             } else {
                 setMessage("Invalid credentials");
@@ -151,7 +158,7 @@ export default function LoginPage() {
 
                     <p className="text-center text-sm mt-6 text-gray-500">
                         Don&apos;t have an account?{" "}
-                        <Link href="/signup" className="text-yellow-500 font-bold">
+                        <Link href="/singup" className="text-yellow-500 font-bold">
                             Sign Up
                         </Link>
                     </p>

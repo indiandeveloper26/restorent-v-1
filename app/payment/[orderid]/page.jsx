@@ -19,7 +19,7 @@ export default function PaymentPage() {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const userid = userdataaa?.userId;
+    const userid = userdataaa?._id;
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -36,10 +36,20 @@ export default function PaymentPage() {
     }, [orderid]);
 
     const handlePayment = async () => {
-        if (!order || !userid) {
+        console.log(order, userid)
+
+        if (!order) {
+            console.log('error')
+            console.log('now go', userid)
             toast.error("Session expired or order not found.");
             return;
         }
+        // if (!order || !userid) {
+        //     console.log('error')
+        //     toast.error("Session expired or order not found.");
+        //     return;
+        // }
+        console.log('now go', order)
 
         try {
             const paymentRes = await axios.post("/backend/payment/crate", {
@@ -58,12 +68,13 @@ export default function PaymentPage() {
                 order_id: paymentData.id,
                 handler: async function (response) {
                     try {
-                        await axios.post(`/backend/order/${order._id}/pay`, {
+                        let data = await axios.post(`/backend/order/${order._id}/pay`, {
                             userid,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_signature: response.razorpay_signature,
                         });
+                        console.log('data', data)
                         toast.success("Payment Successful!");
                         router.push("/order");
                     } catch (err) {

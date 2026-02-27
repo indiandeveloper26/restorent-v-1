@@ -37,6 +37,8 @@ export default function AddProductPage() {
       try {
         const parsed = JSON.parse(userData);
         const id = parsed.userdata._id;
+
+        console.log('userid', id)
         setRestaurantId(id);
         dispatch(fetchProducts(id));
       } catch (err) {
@@ -66,6 +68,7 @@ export default function AddProductPage() {
   };
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     setLoading(true);
 
@@ -94,7 +97,7 @@ export default function AddProductPage() {
       }
 
       toast.success("New delicacy added! 🍽️");
-      router.push("/dashboard");
+      router.push("/pizza");
     } catch (err) {
       toast.error(err.message || "Error adding item");
     } finally {

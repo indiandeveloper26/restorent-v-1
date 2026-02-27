@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 
-import dbConnect from "../../../../lib/db";
-import Restaurant from "../../../../modals/user";
+import dbConnect from "../../../../../lib/db";
+import Restaurant from "../../../../../modals/user";
 
 
-export async function POST(req) {
+export async function GET(req, { params }) {
     try {
         await dbConnect();
 
-        const { id } = await req.json();
+        const { id } = await params;
+        // let id = '69973a6fd7f2aeefc96217e1'
 
         console.log('iddd', id)
 

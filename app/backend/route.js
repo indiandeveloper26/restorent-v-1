@@ -8,6 +8,6 @@ export async function GET() {
 
     await dbConnect()
 
-    let data = await Restaurant.findById('6983587291983028c646a586')
+    let data = await Restaurant.findById('69973a6fd7f2aeefc96217e1')
     return NextResponse.json({ "dta": data })
 }

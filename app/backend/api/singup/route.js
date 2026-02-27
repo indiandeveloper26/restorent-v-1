@@ -1,10 +1,4 @@
-
-
-
-
-
 import bcrypt from "bcryptjs";
-
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import dbConnect from "../../../lib/db";
@@ -17,58 +11,62 @@ export async function POST(request) {
         const body = await request.json();
         const { name, email, password, phoneNumber } = body;
 
-        console.log("Request body:", body);
+        console.log("Signup Request:", body);
 
-        // Validate required fields
+        // 1. Basic Validation
         if (!name || !email || !password) {
-            return new NextResponse(
-                JSON.stringify({ error: "Name, email, and password are required." }),
+            return NextResponse.json(
+                { error: "Name, email, and password are required." },
                 { status: 400 }
             );
         }
 
-        // Connect to MongoDB
         await dbConnect();
 
-        // Check if user already exists
+        // 2. Check if user already exists
         const existingUser = await Restaurant.findOne({ email });
         if (existingUser) {
-            return new NextResponse(
-                JSON.stringify({ error: "User with this email already exists." }),
+            return NextResponse.json(
+                { error: "User with this email already exists." },
                 { status: 409 }
             );
         }
 
-        // Hash password
+        // 3. Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user
-        const user = await Restaurant.create({
+        // 4. Create new user
+        const newUser = await Restaurant.create({
             name,
             email,
             password: hashedPassword,
-            phoneNumber: phoneNumber || undefined, // prevent null insert
+            phoneNumber: phoneNumber || undefined,
         });
 
-        // Generate JWT token
+        // Password ko response se hatane ke liye (Security)
+        const userResponse = newUser.toObject();
+        delete userResponse.password;
+
+        // 5. Generate JWT token
         const token = jwt.sign(
-            { id: user._id, email: user.email },
+            { id: newUser._id, email: newUser.email },
             JWT_SECRET,
             { expiresIn: "7d" }
         );
 
-        // Create NextResponse
+        // 6. Create Response (Login jaisa structure)
         const response = NextResponse.json({
-            message: "User created and logged in",
-            userId: user._id,
+            login: "true", // Taaki frontend turant login maan le
+            message: "User created and logged in successfully",
+            user: userResponse // Pura user object
         }, { status: 201 });
 
-        // Set HttpOnly cookie with token
+        // 7. Set Cookie
         response.cookies.set("token", token, {
             httpOnly: true,
             path: "/",
             maxAge: 7 * 24 * 60 * 60, // 7 days
-            secure: process.env.NODE_ENV === "production", // secure in prod
+            secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
         });
 
@@ -77,18 +75,15 @@ export async function POST(request) {
     } catch (error) {
         console.error("Signup error:", error);
 
-        // Handle MongoDB duplicate key error
         if (error.code === 11000) {
-            const field = Object.keys(error.keyPattern)[0];
-            return new NextResponse(
-                JSON.stringify({ error: `${field} already exists.` }),
+            return NextResponse.json(
+                { error: "Email or Phone already exists." },
                 { status: 409 }
             );
         }
 
-        // Generic server error
-        return new NextResponse(
-            JSON.stringify({ error: "Internal Server Error" }),
+        return NextResponse.json(
+            { error: "Internal Server Error" },
             { status: 500 }
         );
     }

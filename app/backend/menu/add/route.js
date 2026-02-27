@@ -10,7 +10,7 @@ export async function POST(req) {
         // FormData parse
         const data = await req.formData();
 
-        console.log('dfadsf', data)
+        console.log('menuadd data', data)
 
         // ----- TEXT FIELDS -----
         const name = data.get("name");

@@ -32,6 +32,7 @@ export async function POST(request) {
 
         // Find user by email
         const user = await Restaurant.findOne({ email });
+        console.log('logindta', user)
         if (!user) {
             return new NextResponse(
                 JSON.stringify({ error: "Invalid credentials." }),

@@ -22,6 +22,8 @@ export default function ProductDetailPage() {
     const [activeImage, setActiveImage] = useState(0);
     const [adding, setAdding] = useState(false);
 
+    console.log('pizzzausreid', userdataaa?._id)
+
     useEffect(() => {
         if (!products.length) dispatch(fetchProducts());
     }, [products.length, dispatch]);
@@ -36,14 +38,16 @@ export default function ProductDetailPage() {
     const handleAddToCart = async () => {
         if (!userdataaa) return toast.error("Please login first");
 
-        console.log('iddd', userdataaa.userId)
+        console.log('pizzzausreid', userdataaa._id)
         setAdding(true);
         try {
-            await fetch("/backend/api/cart/add", {
+            let dta = await fetch("/backend/api/cart/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId: userdataaa.userId, productId: product._id }),
+                body: JSON.stringify({ userId: userdataaa._id, productId: product._id }),
             });
+
+            console.log('cardddta', dta)
             toast.success("Added to cart");
         } catch {
             toast.error("Something went wrong");

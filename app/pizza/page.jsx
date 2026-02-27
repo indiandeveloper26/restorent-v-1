@@ -7,10 +7,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingBag, Filter, Star, Pizza, Zap } from "lucide-react";
 import ProductSkeletonCard from "../componet/skeleten"; // Ensure path is correct
 import FastAutoSlider from "../componet/slider";
+import axios from "axios";
 
 export default function ProductsClient() {
     const router = useRouter();
-    const { products = [], fetchProducts, loading, error, theme } = useTheme();
+    const { products = [], fetchProducts, userdataaa, loading, error, theme } = useTheme();
 
     const [search, setSearch] = useState("");
     const [filtered, setFiltered] = useState([]);
@@ -20,6 +21,30 @@ export default function ProductsClient() {
     useEffect(() => {
         fetchProducts();
     }, []);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // 🔍 Filter Products
     useEffect(() => {

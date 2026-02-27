@@ -17,7 +17,7 @@ export default function CheckoutPage() {
     const [paymentMethod, setPaymentMethod] = useState("Online");
     const [loading, setLoading] = useState(true);
 
-    const userId = userdataaa?.userId || userdataaa._id;
+    const userId = userdataaa?._id || "";
 
     console.log('userid', userId)
 
